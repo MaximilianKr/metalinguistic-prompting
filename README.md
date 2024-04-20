@@ -4,7 +4,7 @@ This repository is a fork from [Prompting is not a substitute for probability me
 
 Please refer to the author's original implementation for details.
 
-This **work in progress** fork adds backends for `Pythia` and `OLMo` models via the `transformers` library. It is primarily meant for prototyping evaluations using the existing proprocessed datasets from Hu & Levy.
+This **work in progress** fork adds backends for `Pythia` and `OLMo` models via the `transformers` library. It is primarily meant for prototyping evaluations using the existing preprocessed datasets from Hu & Levy.
 
 ## Additional Models
 
