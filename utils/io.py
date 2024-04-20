@@ -22,7 +22,7 @@ def json2dict(in_file):
 def parse_args():
     parser = argparse.ArgumentParser(description="Evaluate model using specified prompts")
     parser.add_argument("--model", "-M", type=str, help="Name of model")
-    parser.add_argument("--revision", type=str, help="Revision or checkpoint for Pythia models", default="step143000")  # TODO: add OLMo checkpoints
+    parser.add_argument("--revision", type=str, help="Revision or checkpoint for Pythia or OLMo models", default=None)
     parser.add_argument("--model_type", type=str, choices=["openai", "hf"])
     parser.add_argument("--key", "-K", type=str, default="key.txt", 
                         help="Path to file with secret OpenAI API key")
@@ -68,10 +68,7 @@ def initialize_model(args):
         elif "pythia" in args.model:
             model = models.Pythia_LLM(args.eval_type, args.model, args.revision,args.seed, device=device)
         elif "allenai" in args.model:
-            # ToDo: add OLMo
-            raise ValueError(
-                f"Model not implemented yet! (Your model: {args.model})"
-            )
+            model = models.OLMo_LLM(args.eval_type, args.model, args.revision,args.seed, device=device)
         else:
             raise ValueError(
                 f"Model not supported! (Your model: {args.model})"
