@@ -22,11 +22,12 @@ def json2dict(in_file):
 def parse_args():
     parser = argparse.ArgumentParser(description="Evaluate model using specified prompts")
     parser.add_argument("--model", "-M", type=str, help="Name of model")
+    parser.add_argument("--revision", type=str, help="Revision or checkpoint for Pythia models", default="step143000")  # TODO: add OLMo checkpoints
     parser.add_argument("--model_type", type=str, choices=["openai", "hf"])
     parser.add_argument("--key", "-K", type=str, default="key.txt", 
                         help="Path to file with secret OpenAI API key")
     parser.add_argument("--seed", "-S", type=int, default=0, 
-                        help="Random seed for reproducibility")
+                        help="Random seed for reproducibility")    
     parser.add_argument("--eval_type", type=str, default="direct", 
                         choices=[
                             "direct", 
@@ -34,13 +35,13 @@ def parse_args():
                             "metaInstruct", 
                             "metaQuestionComplex"
                         ], 
-                        help="Type of evaluation (for prompt design)")
+                        help="Type of evaluation (for prompt design)")   
     parser.add_argument("--option_order", type=str, default="goodFirst",
                         choices=["goodFirst", "badFirst"]),
     parser.add_argument("--data_file", type=str,
                         help="Path to data containing prefixes for next-word prediction task")
     parser.add_argument("--out_file", type=str,
-                        help="Path to save output JSON file")
+                        help="Path to save output JSON file")    
     parser.add_argument("--dist_folder", type=str, default=None,
                         help="(OPTIONAL) path to folder to save distribution files (as .npy)")
     args = parser.parse_args()
@@ -64,6 +65,13 @@ def initialize_model(args):
     else:
         if "flan-t5" in args.model:
             model = models.T5_LLM(args.eval_type, args.model, args.seed, device=device)
+        elif "pythia" in args.model:
+            model = models.Pythia_LLM(args.eval_type, args.model, args.revision,args.seed, device=device)
+        elif "allenai" in args.model:
+            # ToDo: add OLMo
+            raise ValueError(
+                f"Model not implemented yet! (Your model: {args.model})"
+            )
         else:
             raise ValueError(
                 f"Model not supported! (Your model: {args.model})"

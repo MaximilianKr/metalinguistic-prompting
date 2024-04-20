@@ -97,6 +97,106 @@ class OpenAI_LLM(LLM):
             return prompt, logprob_of_continuation, top_logprobs
         else:
             return prompt, logprob_of_continuation
+        
+
+class Pythia_LLM(LLM):
+    # TODO: fix revision & cache_dir in argparse / model args!
+    # TODO#2: add batch processing?
+    def __init__(self, eval_type, model, revision, seed, device="cpu"):
+        super().__init__(eval_type, model, seed, device)
+        self._model, self._tokenizer = load_mt(self.model, revision, device=self.device)
+        self._model.eval()
+
+    def _get_logprobs(self, prompt, **kwargs):
+        # TODO: is this logic of getting logprobs correct?
+        # adapted from https://discuss.huggingface.co/t/announcement-generation-get-probabilities-for-generated-output/30075/17
+        # Tokenize input prompt
+        encoding = self._tokenizer(prompt, return_tensors="pt")
+        input_ids = encoding.input_ids.to('cuda')
+
+        # Process input through model
+        outputs = self._model(input_ids)
+        probs = torch.log_softmax(outputs.logits, dim=-1).detach()
+
+        probs = probs[0, :-1, :]
+        sliced_input_ids = input_ids[0, 1:]
+        gen_probs = torch.gather(probs, 1, sliced_input_ids[:, None]).squeeze(-1)
+
+        # Restore first token
+        first_token_id = input_ids[0, 0]
+        first_token = self._tokenizer.decode(first_token_id)
+
+        # Collect tokens and their log probabilities into structured dictionary
+        tokens = []
+        tokens.append(first_token)
+        token_logprobs = [None]  # First token will have no logprob associated
+        for token, p in zip(sliced_input_ids, gen_probs):
+            if token not in self._tokenizer.all_special_ids:
+                decoded_token = self._tokenizer.decode([token])
+                tokens.append(decoded_token)
+                token_logprobs.append(p.item())
+
+        return {"tokens": tokens, "token_logprobs": token_logprobs}
+
+    def get_full_sentence_logprob(self, sentence, **kwargs):
+        logprobs = self._get_logprobs(sentence)
+        token_logprobs = logprobs["token_logprobs"]
+
+        # Sum up logprobs for each token in the sentence to get the full logprob.
+        relevant_token_logprobs = token_logprobs[1:] # the first entry is None; no prob for first token
+        total_logprob = sum(relevant_token_logprobs)
+        
+        return total_logprob
+
+    def get_logprob_of_continuation(self,
+                                    prefix, 
+                                    continuation, 
+                                    task="word_pred",
+                                    options=None, 
+                                    return_dist=False,
+                                    **kwargs):
+        # Construct prompt and get logprobs
+        prompt = make_prompt(
+            prefix, 
+            continuation,
+            eval_type=self.eval_type,
+            task=task,
+            options=options
+        )
+        logprobs = self._get_logprobs(prompt, **kwargs)
+        tokens, token_logprobs = logprobs["tokens"], logprobs["token_logprobs"]
+
+        # Identify indices from `tokens` that correspond to the relevant
+        # continuation (final word). This could be split into multiple tokens.
+        n_tokens = len(tokens)
+        full_continuation_str = " " + continuation
+        if task == "sentence_comparison":
+            # The number tokens sometimes have preceding space, sometimes not.
+            end_strs = [full_continuation_str, continuation] 
+        else:
+            end_strs = full_continuation_str
+        inds = []
+        cur_word = ""
+        for tok_idx in range(n_tokens-1, -1, -1):
+            # Go backwards through the list of tokens.
+            cur_tok = tokens[tok_idx]
+            cur_word = cur_tok + cur_word
+            if token_logprobs[tok_idx] is None:
+                break
+            else:
+                inds = [tok_idx] + inds
+                if cur_word in end_strs:
+                    break
+
+        # Obtain logprob of gold (ground-truth) word by summing logprobs
+        # of all sub-word tokens, as measured by `inds`.
+        logprob_of_continuation = sum([token_logprobs[i] for i in inds])
+        
+        if return_dist:
+            full_vocab_logprobs = []  # TODO: maybe fixme
+            return prompt, logprob_of_continuation, full_vocab_logprobs
+        else:
+            return prompt, logprob_of_continuation
 
 
 class T5_LLM(LLM):

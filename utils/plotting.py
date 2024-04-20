@@ -20,6 +20,8 @@ HF_MODELS = [
     "Flan-T5 SM",
     "Flan-T5 LG",
     "Flan-T5 XL",
+    "Pythia-70M-deduped",
+    "Pythia-2.8B-deduped"
 ]
 OPENAI_MODELS = [
     "text-curie-001", 
@@ -33,6 +35,9 @@ def pretty_model(model):
         "google/flan-t5-small": "Flan-T5 SM",
         "google/flan-t5-large": "Flan-T5 LG",
         "google/flan-t5-xl": "Flan-T5 XL",
+        "EleutherAI/pythia-70m-deduped": "Pythia-70M-deduped",
+        "EleutherAI/pythia-2.8B-deduped": "Pythia-2.8B-deduped",
+
     }
     if model in model_map:
         return model_map[model]
@@ -54,6 +59,7 @@ MODEL_PAL = {
     "Flan-T5 SM": blues[0],
     "Flan-T5 LG": blues[2],
     "Flan-T5 XL": blues[4],
+    "Pythia-70M": blues[0], # TODO: FIXME
     "text-curie-001": reds[0],
     "text-davinci-002": reds[2],
     "text-davinci-003": reds[4]
@@ -68,7 +74,8 @@ EVAL_TYPE_PAL = {
 }
 
 # Consistent styling for error bars.
-BAR_STYLE = dict(capsize=0.05, errwidth=1) # lw=0.5)
+# BAR_STYLE = dict(capsize=0.05, errwidth=1) # lw=0.5)
+BAR_STYLE = dict(capsize=0.05, err_kws={'linewidth': 1})
 
 BARPLOT_SIZE = (8, 4)
 

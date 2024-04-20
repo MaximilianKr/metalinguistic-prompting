@@ -20,6 +20,7 @@ if __name__ == "__main__":
     # Meta information.
     meta_data = {
         "model": args.model,
+        "revision": args.revision,
         "seed": args.seed,
         "task": TASK,
         "eval_type": args.eval_type,
