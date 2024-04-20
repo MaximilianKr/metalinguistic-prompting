@@ -6,9 +6,24 @@ Please refer to the author's original implementation for details.
 
 This **work in progress** fork adds backends for `Pythia` and `OLMo` models via the `transformers` library. It is primarily meant for prototyping evaluations using the existing preprocessed datasets from Hu & Levy.
 
+## Overview
+
+- [Additional Models](#additional-models)
+  - [EleutherAI/Pythia](#eleutherai-pythia)
+  - [AI2/OLMo](#ai2-olmo)
+- [Setup](#setup)
+- [Evaluation materials](#evaluation-materials)
+- [Evaluation scripts](#evaluation-scripts)
+  - [NEW: HuggingFace / Pythia](#new-huggingface--pythia)
+  - [NEW: HuggingFace / OLMo](#new-huggingface--olmo)
+  - [OLD: HuggingFace / FLAN-T5](#old-huggingface--flan-t5)
+  - [OLD: OpenAI](#old-openai)
+- [ToDo](#todo)
+- [Author](#author)
+
 ## Additional Models
 
-### EleutherAI/Pythia
+### EleutherAI-Pythia
 
 The **Pythia** models were trained by [EleutherAI](https://www.eleuther.ai/) in different sizes with intermediate checkpoints available. The weights, training code, and data are all fully accessible.
 
@@ -16,7 +31,7 @@ The **Pythia** models were trained by [EleutherAI](https://www.eleuther.ai/) in 
 - [Pythia Scaling Suite on HuggingFace](https://huggingface.co/collections/EleutherAI/pythia-scaling-suite-64fb5dfa8c21ebb3db7ad2e1)
 - [Offical Github repository](https://github.com/EleutherAI/pythia)
 
-### AI2/OLMo
+### AI2-OLMo
 
 The **OLMo** models were released by [AI2](https://allenai.org/) in different sizes with intermediate checkpoints available. The weights, training code, and data are all fully accessible.
 
@@ -46,18 +61,35 @@ The [scripts](scripts) folder contains scripts for running the experiments. Resu
 
 ### NEW: HuggingFace / Pythia
 
-For example, to evaluate `pythia-70m-deduped` on the *dtfit* dataset for word comparison of Experiment 2, run the following command from the root of this directory:
+```shell
+# Template 
+bash scripts/<experiment_script>.sh <corpus> EleutherAI/<pythia-model> <revision> <save_name>
+```
+
+For example, to evaluate `pythia-70m-deduped` on the *dtfit* dataset for the word comparison of Experiment 2, run the following command from the root of this directory:
 
 ```shell
-bash scripts/run_exp2_pythia.sh blimp EleutherAI/pythia-70m-deduped step143000 pythia-70m-deduped
+bash scripts/run_exp2_pythia.sh blimp EleutherAI/pythia-70m-deduped main pythia-70m-deduped
 ```
-*Note*: `step143000` corresponds to the `main` branch / final checkpoint. See the [HuggingFace Suite](https://huggingface.co/collections/EleutherAI/pythia-scaling-suite-64fb5dfa8c21ebb3db7ad2e1) for details on how to access different checkpoints.
+
+*Note*: revision `main` corresponds to the main branch / final checkpoint. Check one of the [HuggingFace Pythia Model Cards](https://huggingface.co/EleutherAI/pythia-70m-deduped) for details on how to access different (earlier) checkpoints.
 
 ### NEW: HuggingFace / OLMo
 
-tbd
+```shell
+# Template
+bash scripts/<experiment_script>.sh <corpus> allenai/<OLMo-model> <revision> <save_name>
+```
 
-### HuggingFace / FLAN-T5
+For example, to evaluate `OLMo-1B-hf` on the *news* dataset for the word prediction of Experiment 1, run the following command from the root of this directory:
+
+```shell
+bash scripts/run_exp1_olmo.sh news allenai/OLMo-1B-hf main OLMo-1B-hf
+```
+
+*Note*: revision `main` corresponds to the main branch / final checkpoint. Check one of the [HuggingFace OLMo Model Cards](https://huggingface.co/allenai/OLMo-1.7-7B-hf) for details on how to access different (earlier) checkpoints.
+
+### OLD: HuggingFace / FLAN-T5
 
 The original *HuggingFace* scripts (`*_hf.sh`) utilize the `FLAN-T5` models in 3 different sizes (small, large, XL).
 
@@ -67,7 +99,7 @@ For example, to evaluate `flan-t5-small` on the *SyntaxGym* dataset of Experimen
 bash scripts/run_exp3b_hf.sh syntaxgym google/flan-t5-small flan-t5-small
 ```
 
-### OpenAI
+### OLD: OpenAI
 
 The original *OpenAI* implementation (`*_openai.sh`) used 3 different models (`text-curie-001`/GPT-3, `text-davinci-002`/GTP-3.5-SFT, `text-davinci-003`/GTP-3.5-SFT+RLHF) all of which are deprecated by now. 
 
@@ -75,9 +107,18 @@ There are still 2 base models available via *OpenAI*'s API (`babbage-002`/replac
 
 For more details on the base models still available read the [official documentation](https://platform.openai.com/docs/models/gpt-base).
 
-
 ## ToDo
 
 - currently each eval initializes the model repeatedly, resulting in redundant initializations running several evals at once (e.g. when using the recommended bash scripts) leading to severe slowdown
 - no batching: only single instances are passed to the model, again severe slowdown for larger models
 - analysis/evaluation with original Jupyter Notebook is kind of broken with new models
+- clean up code - there is quite some lot of boilerplate / redundant code + script files in there (and I added even more)
+
+## Author
+
+Please refer to the authors of the [original repository](https://github.com/jennhu/metalinguistic-prompting)
+
+For the fork:
+- Maximilian Krupop
+
+[Back to Top](#diachronic-testing-of-causal-language-models)
