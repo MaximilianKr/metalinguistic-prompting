@@ -46,10 +46,10 @@ The [scripts](scripts) folder contains scripts for running the experiments. Resu
 
 ### NEW: HuggingFace / Pythia
 
-For example, to evaluate `pythia-70m-deduped` on the *BLiMP* dataset of Experiment 3b, run the following command from the root of this directory:
+For example, to evaluate `pythia-70m-deduped` on the *dtfit* dataset for word comparison of Experiment 2, run the following command from the root of this directory:
 
 ```shell
-bash scripts/run_exp3b_pythia.sh blimp EleutherAI/pythia-70m-deduped step143000 pythia-70m-deduped
+bash scripts/run_exp2_pythia.sh blimp EleutherAI/pythia-70m-deduped step143000 pythia-70m-deduped
 ```
 *Note*: `step143000` corresponds to the `main` branch / final checkpoint. See the [HuggingFace Suite](https://huggingface.co/collections/EleutherAI/pythia-scaling-suite-64fb5dfa8c21ebb3db7ad2e1) for details on how to access different checkpoints.
 
