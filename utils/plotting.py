@@ -20,8 +20,6 @@ HF_MODELS = [
     "Flan-T5 SM",
     "Flan-T5 LG",
     "Flan-T5 XL",
-    "Pythia-70M-deduped",
-    "Pythia-2.8B-deduped"
 ]
 OPENAI_MODELS = [
     "text-curie-001", 
@@ -35,9 +33,26 @@ def pretty_model(model):
         "google/flan-t5-small": "Flan-T5 SM",
         "google/flan-t5-large": "Flan-T5 LG",
         "google/flan-t5-xl": "Flan-T5 XL",
+        "EleutherAI/pythia-70m": "Pythia-70M",
+        "EleutherAI/pythia-160m": "Pythia-160M",
+        "EleutherAI/pythia-410m": "Pythia-410M",
+        "EleutherAI/pythia-1.0B": "Pythia-1.0B",
+        "EleutherAI/pythia-1.4B": "Pythia-1.4B",
+        "EleutherAI/pythia-2.8B": "Pythia-2.8B",
+        "EleutherAI/pythia-6.9B": "Pythia-6.9B",
+        "EleutherAI/pythia-12B": "Pythia-12B",
         "EleutherAI/pythia-70m-deduped": "Pythia-70M-deduped",
+        "EleutherAI/pythia-160m-deduped": "Pythia-160M-deduped",
+        "EleutherAI/pythia-410m-deduped": "Pythia-410M-deduped",
+        "EleutherAI/pythia-1.0B-deduped": "Pythia-1.0B-deduped",
+        "EleutherAI/pythia-1.4B-deduped": "Pythia-1.4B-deduped",
         "EleutherAI/pythia-2.8B-deduped": "Pythia-2.8B-deduped",
-
+        "EleutherAI/pythia-6.9B-deduped": "Pythia-6.9B-deduped",
+        "EleutherAI/pythia-12B-deduped": "Pythia-12B-deduped",
+        "allenai/OLMo-1B-hf": "OLMo-1B-hf",
+        "allenai/OLMo-7B-hf": "OLMo-7B-hf",
+        "allenai/OLMo-1.7-7B-hf": "OLMo-1.7-7B-hf",
+        "allenai/OLMo-7B-Twin-2T-hf": "OLMo-7B-Twin-2T-hf",
     }
     if model in model_map:
         return model_map[model]
@@ -59,7 +74,6 @@ MODEL_PAL = {
     "Flan-T5 SM": blues[0],
     "Flan-T5 LG": blues[2],
     "Flan-T5 XL": blues[4],
-    "Pythia-70M": blues[0], # TODO: FIXME
     "text-curie-001": reds[0],
     "text-davinci-002": reds[2],
     "text-davinci-003": reds[4]
