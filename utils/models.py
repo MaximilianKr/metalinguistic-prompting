@@ -100,8 +100,7 @@ class OpenAI_LLM(LLM):
         
 
 class Pythia_LLM(LLM):
-    # TODO: fix revision & cache_dir in argparse / model args!
-    # TODO#2: add batch processing?
+    # TODO: add batch processing?
     def __init__(self, eval_type, model, revision, seed, device="cpu"):
         super().__init__(eval_type, model, seed, device)
         self._model, self._tokenizer = load_mt(self.model, revision, device=self.device)
@@ -197,6 +196,11 @@ class Pythia_LLM(LLM):
             return prompt, logprob_of_continuation, full_vocab_logprobs
         else:
             return prompt, logprob_of_continuation
+
+
+class OLMo_LLM(Pythia_LLM):
+    # Same functionality as Pythia models, but could be extended later
+    pass
 
 
 class T5_LLM(LLM):

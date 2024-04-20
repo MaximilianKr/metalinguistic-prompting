@@ -18,23 +18,40 @@ def load_mt(model_name="google/flan-t5-small", revision=None, device="cpu", **kw
         tokenizer = T5Tokenizer.from_pretrained(model_name)
         print(f"Successfully loaded tokenizer ({model_name})")
     elif "pythia" in model_name:
+        if revision == 'main':
+            revision = 'step143000'
         cache_placeholder = model_name.split('/')[1]
         model = GPTNeoXForCausalLM.from_pretrained(
             model_name,
             revision=revision,
             cache_dir=f"./{cache_placeholder}/{revision}",
             **kwargs
-            ).to(device)
+        ).to(device)
         print(f"Successfully loaded model ({model_name}/{revision})")
         tokenizer = AutoTokenizer.from_pretrained(
             model_name,
             revision=revision,
             cache_dir=f"./{cache_placeholder}/{revision}",
-            padding_side="left"  # TODO: check effect on result
-            )
-        # tokenizer.pad_token = tokenizer.eos_token  # TODO: test if necessary?
+        )
         print(f"Successfully loaded tokenizer ({model_name}/{revision})")
-    # TODO: add OLMo
+    elif "allenai" in model_name:
+        # if revision == 'main':
+        #     model = AutoModelForCausalLM.from_pretrained(
+        #         model_name,
+        #         **kwargs
+        #         ).to(device)
+        # else:    
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            revision=revision,
+            **kwargs
+        ).to(device)
+        print(f"Successfully loaded model ({model_name}/{revision})")
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_name,
+            # revision=revision,
+        )
+        print(f"Successfully loaded tokenizer ({model_name}/{revision})")
     else:
         print("WARNING: code has only been tested for Flan-T5 Huggingface models")
         model = AutoModelForCausalLM.from_pretrained(model_name, **kwargs).to(device)

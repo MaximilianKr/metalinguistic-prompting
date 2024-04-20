@@ -68,7 +68,7 @@ def initialize_model(args):
         elif "pythia" in args.model:
             model = models.Pythia_LLM(args.eval_type, args.model, args.revision,args.seed, device=device)
         elif "allenai" in args.model:
-            model = models.OLMo_LLM(args.eval_type, args.model, args.revision,args.seed, device=device)
+            model = models.OLMo_LLM(args.eval_type, args.model, args.revision, args.seed, device=device)
         else:
             raise ValueError(
                 f"Model not supported! (Your model: {args.model})"
