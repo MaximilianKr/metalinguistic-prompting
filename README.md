@@ -4,7 +4,7 @@ This repository is a fork from [Prompting is not a substitute for probability me
 
 Please refer to the author's original implementation for details.
 
-This **work in progress** fork adds backends for `Pythia` and `OLMo` models via the `transformers` library. It is primarily meant for prototyping evaluations using the existing preprocessed datasets from Hu & Levy.
+This **work in progress** fork adds backends for `Pythia` and `OLMo` (with option for running quantized) models via the `transformers` library. It is primarily meant for prototyping evaluations using the existing preprocessed datasets from Hu & Levy.
 
 ## Overview
 
@@ -16,6 +16,8 @@ This **work in progress** fork adds backends for `Pythia` and `OLMo` models via 
 - [Evaluation scripts](#evaluation-scripts)
   - [NEW: HuggingFace / Pythia](#new-huggingface--pythia)
   - [NEW: HuggingFace / OLMo](#new-huggingface--olmo)
+    - [Full Precision](#full-precision)
+    - [Quantized Model](#quantized-model-either-4bit-or-8bit)
   - [OLD: HuggingFace / FLAN-T5](#old-huggingface--flan-t5)
   - [OLD: OpenAI](#old-openai)
 - [ToDo](#todo)
@@ -38,7 +40,6 @@ The **OLMo** models were released by [AI2](https://allenai.org/) in different si
 - [Technical Report on arXiv](https://arxiv.org/abs/2402.00838)
 - [OLMo Suite on HuggingFace](https://huggingface.co/collections/allenai/olmo-suite-65aeaae8fe5b6b2122b46778)
 - [Offical Github repository](https://github.com/allenai/OLMo)
-
 
 ## Setup
 
@@ -78,16 +79,26 @@ bash scripts/run_exp2_pythia.sh blimp EleutherAI/pythia-70m-deduped main pythia-
 
 ```shell
 # Template
-bash scripts/<experiment_script>.sh <corpus> allenai/<OLMo-model> <revision> <save_name>
+bash scripts/<experiment_script>.sh <corpus> allenai/<OLMo-model> <revision> <save_name> <optional: quantization>
 ```
 
-For example, to evaluate `OLMo-1B-hf` on the *news* dataset for the word prediction of Experiment 1, run the following command from the root of this directory:
+#### Full Precision
+
+For example, to evaluate `OLMo-1B-hf` (with full precision) on the *news* dataset for the word prediction of Experiment 1, run the following command from the root of this directory:
 
 ```shell
 bash scripts/run_exp1_olmo.sh news allenai/OLMo-1B-hf main OLMo-1B-hf
 ```
 
 *Note*: revision `main` corresponds to the main branch / final checkpoint. Check one of the [HuggingFace OLMo Model Cards](https://huggingface.co/allenai/OLMo-1.7-7B-hf) for details on how to access different (earlier) checkpoints.
+
+#### Quantized Model (either `4bit` or `8bit`)
+
+For example, to evaluate `OLMo-7B-hf` with **4bit precision** on the *p18* dataset for the word prediction of Experiment 1, run the following command from the root of this directory:
+
+```shell
+bash scripts/run_exp1_olmo.sh p18 allenai/OLMo-7B-hf main OLMo-7B-hf 4bit
+```
 
 ### OLD: HuggingFace / FLAN-T5
 
@@ -101,7 +112,7 @@ bash scripts/run_exp3b_hf.sh syntaxgym google/flan-t5-small flan-t5-small
 
 ### OLD: OpenAI
 
-The original *OpenAI* implementation (`*_openai.sh`) used 3 different models (`text-curie-001`/GPT-3, `text-davinci-002`/GTP-3.5-SFT, `text-davinci-003`/GTP-3.5-SFT+RLHF) all of which are deprecated by now. 
+The original *OpenAI* implementation (`*_openai.sh`) used 3 different models (`text-curie-001`/GPT-3, `text-davinci-002`/GTP-3.5-SFT, `text-davinci-003`/GTP-3.5-SFT+RLHF) all of which are deprecated by now.
 
 There are still 2 base models available via *OpenAI*'s API (`babbage-002`/replacement for GPT-3 `ada` and `babbage` base models and `davinci-002`/replacement for GPT-3 `curie` and `davinci` base models), however, the scripts need to be updated first (not done yet). You also need to provide an API key. See the original repository for details.
 
@@ -119,6 +130,7 @@ For more details on the base models still available read the [official documenta
 Please refer to the authors of the [original repository](https://github.com/jennhu/metalinguistic-prompting)
 
 For the fork:
+
 - Maximilian Krupop
 
 [Back to Top](#diachronic-testing-of-causal-language-models)
