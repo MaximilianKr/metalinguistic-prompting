@@ -101,9 +101,9 @@ class OpenAI_LLM(LLM):
 
 class Pythia_LLM(LLM):
     # TODO: add batch processing?
-    def __init__(self, eval_type, model, revision, seed, device="cpu"):
+    def __init__(self, eval_type, model, revision, quantization, seed, device="cpu"):
         super().__init__(eval_type, model, seed, device)
-        self._model, self._tokenizer = load_mt(self.model, revision, device=self.device)
+        self._model, self._tokenizer = load_mt(self.model, revision, quantization, device=self.device)
         self._model.eval()
 
     def _get_logprobs(self, prompt, **kwargs):
