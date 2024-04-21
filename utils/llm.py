@@ -14,6 +14,16 @@ torch.set_grad_enabled(False)
 # Helper function for loading Huggingface models and tokenizers.
 def load_mt(model_name="google/flan-t5-small", revision=None,
             quantization=None, device="cpu", **kwargs):
+    # For Pythia and OLMo
+    if quantization=="4bit":
+        quantization_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.float16
+            )
+    elif quantization=="8bit":
+        quantization_config = BitsAndBytesConfig(
+            load_in_8bit=True
+            )
     if "flan-t5" in model_name:
         model = T5ForConditionalGeneration.from_pretrained(
             model_name, 
@@ -24,12 +34,23 @@ def load_mt(model_name="google/flan-t5-small", revision=None,
         print(f"Successfully loaded tokenizer ({model_name})")
     elif "pythia" in model_name:
         cache_placeholder = model_name.split('/')[1]
-        model = GPTNeoXForCausalLM.from_pretrained(
-            model_name,
-            revision=revision,
-            cache_dir=f"./{cache_placeholder}/{revision}",
-            **kwargs
-            ).to(device)
+        if quantization in ["4bit", "8bit"]:
+            model = GPTNeoXForCausalLM.from_pretrained(
+                model_name,
+                revision=revision,
+                cache_dir=f"./{cache_placeholder}/{revision}",
+                device_map="auto",
+                quantization_config=quantization_config,
+                **kwargs
+                )
+        else:
+            # Full precision
+            model = GPTNeoXForCausalLM.from_pretrained(
+                model_name,
+                revision=revision,
+                cache_dir=f"./{cache_placeholder}/{revision}",
+                **kwargs
+                ).to(device)
         print(f"Successfully loaded model ({model_name}/{revision})")
         tokenizer = AutoTokenizer.from_pretrained(
             model_name,
@@ -39,22 +60,13 @@ def load_mt(model_name="google/flan-t5-small", revision=None,
         print(f"Successfully loaded tokenizer ({model_name}/{revision})")
     elif "allenai" in model_name:
         if quantization in ["4bit", "8bit"]:
-            if quantization=="4bit":
-                quantization_config = BitsAndBytesConfig(
-                    load_in_4bit=True,
-                    bnb_4bit_compute_dtype=torch.float16
-                    )
-            elif quantization=="8bit":
-                quantization_config = BitsAndBytesConfig(
-                    load_in_8bit=True
-                    )
             model = AutoModelForCausalLM.from_pretrained(
                 model_name,
                 device_map="auto",
                 quantization_config=quantization_config
             )
         else:
-            # Full Precision  
+            # Full precision  
             model = AutoModelForCausalLM.from_pretrained(
                 model_name,
                 revision=revision,

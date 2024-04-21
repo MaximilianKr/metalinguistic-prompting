@@ -4,6 +4,7 @@ CORPUS=$1 # "syntaxgym" or "blimp"
 MODEL=$2  # e.g., "EleutherAI/pythia-70m-deduped"
 REVISION=$3  # e.g., "step3000", main branch / last checkpoint is "step143000"
 SAFEMODEL=$4  # e.g., "pythia-70m-deduped"; this should be safe for file-naming purposes
+QUANTIZATION=${5:-"full"}  # "4bit" or "8bit", optional
 
 RESULTDIR="results/exp3a_sentence-judgment"
 DATAFILE="datasets/exp3/${CORPUS}/corpus.csv"
@@ -16,7 +17,7 @@ run_experiment () {
     local EVAL_TYPE=$1
 
     # Define variable-dependent file/folder names
-    OUTFILE="${RESULTDIR}/${CORPUS}_${SAFEMODEL}_${REVISION}_${EVAL_TYPE}.json"
+    OUTFILE="${RESULTDIR}/${CORPUS}_${SAFEMODEL}_${QUANTIZATION}_${REVISION}_${EVAL_TYPE}.json"
     
     # By default, we won't save the full vocab distributions.
     # Uncomment the two lines below if you'd like to.
@@ -25,10 +26,11 @@ run_experiment () {
     # mkdir -p $DISTFOLDER
 
     # Run the evaluation script
-    echo "Running Experiment 3a (sentence judgment): model = ${MODEL}; eval_type = ${EVAL_TYPE}" >&2
+    echo "Running Experiment 3a (sentence judgment): model = ${MODEL}_${QUANTIZATION}_${REVISION}; eval_type = ${EVAL_TYPE}" >&2
     python run_exp3a_sentence-judgment.py \
         --model $MODEL \
         --revision $REVISION \
+        --quantization $QUANTIZATION \
         --model_type "hf" \
         --eval_type ${EVAL_TYPE} \
         --data_file $DATAFILE --out_file ${OUTFILE}
