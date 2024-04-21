@@ -21,6 +21,7 @@ if __name__ == "__main__":
     meta_data = {
         "model": args.model,
         "revision": args.revision,
+        "quantization": args.quantization,
         "seed": args.seed,
         "task": TASK,
         "eval_type": args.eval_type,

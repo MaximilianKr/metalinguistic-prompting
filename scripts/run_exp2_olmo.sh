@@ -1,9 +1,10 @@
 #!/bin/bash
 
 CORPUS="dtfit"
-MODEL=$1  # e.g., "EleutherAI/pythia-70m-deduped"
-REVISION=$2  # e.g., "step3000", main branch / last checkpoint is "step143000"
-SAFEMODEL=$3  # e.g., "pythia-70m-deduped"; this should be safe for file-naming purposes
+MODEL=$1  # e.g., "allenai/OLMo-1B-hf", "allenai/OLMo-7B-hf"
+REVISION=$2  # e.g., "main", "step1000-tokens4B"
+SAFEMODEL=$3  # e.g., "OLMo-1B-hf"; this should be safe for file-naming purposes
+QUANTIZATION=${4:-"full"}  # "4bit" or "8bit", optional
 
 RESULTDIR="results/exp2_word-comparison"
 DATAFILE="datasets/exp2/${CORPUS}/corpus.csv"
@@ -17,7 +18,7 @@ run_experiment () {
     local OPTION_ORDER=$2
 
     # Define variable-dependent file/folder names
-    OUTFILE="${RESULTDIR}/${CORPUS}_${SAFEMODEL}_${REVISION}_${EVAL_TYPE}_${OPTION_ORDER}.json"
+    OUTFILE="${RESULTDIR}/${CORPUS}_${SAFEMODEL}_${QUANTIZATION}_${REVISION}_${EVAL_TYPE}_${OPTION_ORDER}.json"
     
     # By default, we won't save the full vocab distributions.
     # Uncomment the two lines below if you'd like to.
@@ -26,10 +27,11 @@ run_experiment () {
     # mkdir -p $DISTFOLDER
 
     # Run the evaluation script
-    echo "Running Experiment 2 (word comparison): model = ${MODEL}_${REVISION}; eval_type = ${EVAL_TYPE}; option_order = ${OPTION_ORDER}" >&2
+    echo "Running Experiment 2 (word comparison): model = ${MODEL}_${QUANTIZATION}_${REVISION}; eval_type = ${EVAL_TYPE}; option_order = ${OPTION_ORDER}" >&2
     python run_exp2_word-comparison.py \
         --model $MODEL \
         --revision $REVISION \
+        --quantization $QUANTIZATION \
         --model_type "hf" \
         --option_order ${OPTION_ORDER} \
         --eval_type ${EVAL_TYPE} \
