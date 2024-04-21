@@ -50,7 +50,7 @@ def pretty_model(model):
         "EleutherAI/pythia-6.9B-deduped": "Pythia-6.9B-deduped",
         "EleutherAI/pythia-12B-deduped": "Pythia-12B-deduped",
         "allenai/OLMo-1B-hf": "OLMo-1B-hf",
-        "allenai/OLMo-7B-hf": "OLMo-7B-hf-4bit",
+        "allenai/OLMo-7B-hf": "OLMo-7B-hf",
         "allenai/OLMo-1.7-7B-hf": "OLMo-1.7-7B-hf",
         "allenai/OLMo-7B-Twin-2T-hf": "OLMo-7B-Twin-2T-hf",
     }
