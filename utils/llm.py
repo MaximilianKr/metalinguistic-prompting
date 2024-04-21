@@ -7,6 +7,9 @@ from transformers import (
 )
 import torch
 
+torch.set_grad_enabled(False)
+
+
 # Helper function for loading Huggingface models and tokenizers.
 def load_mt(model_name="google/flan-t5-small", revision=None, device="cpu", **kwargs):
     if "flan-t5" in model_name:
@@ -18,8 +21,6 @@ def load_mt(model_name="google/flan-t5-small", revision=None, device="cpu", **kw
         tokenizer = T5Tokenizer.from_pretrained(model_name)
         print(f"Successfully loaded tokenizer ({model_name})")
     elif "pythia" in model_name:
-        if revision == 'main':
-            revision = 'step143000'
         cache_placeholder = model_name.split('/')[1]
         model = GPTNeoXForCausalLM.from_pretrained(
             model_name,
@@ -34,26 +35,17 @@ def load_mt(model_name="google/flan-t5-small", revision=None, device="cpu", **kw
             cache_dir=f"./{cache_placeholder}/{revision}",
         )
         print(f"Successfully loaded tokenizer ({model_name}/{revision})")
-    elif "allenai" in model_name:
-        # if revision == 'main':
-        #     model = AutoModelForCausalLM.from_pretrained(
-        #         model_name,
-        #         **kwargs
-        #         ).to(device)
-        # else:    
+    elif "allenai" in model_name: 
         model = AutoModelForCausalLM.from_pretrained(
             model_name,
             revision=revision,
             **kwargs
         ).to(device)
         print(f"Successfully loaded model ({model_name}/{revision})")
-        tokenizer = AutoTokenizer.from_pretrained(
-            model_name,
-            # revision=revision,
-        )
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
         print(f"Successfully loaded tokenizer ({model_name}/{revision})")
     else:
-        print("WARNING: code has only been tested for Flan-T5 Huggingface models")
+        print("WARNING: code has only been tested for Flan-T5, Pythia, and OLMo Huggingface models")
         model = AutoModelForCausalLM.from_pretrained(model_name, **kwargs).to(device)
         print(f"Successfully loaded model ({model_name})")
         tokenizer = AutoTokenizer.from_pretrained(model_name)
