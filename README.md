@@ -1,6 +1,6 @@
 # Diachronic Testing of Causal Language Models
 
-This repository is a fork from [Prompting is not a substitute for probability measurements in large language models](https://github.com/jennhu/metalinguistic-prompting) by Hu & Roger (2023).
+This repository is a fork from [Prompting is not a substitute for probability measurements in large language models](https://github.com/jennhu/metalinguistic-prompting) by Hu & Levy (2023).
 
 Please refer to the author's original implementation for details.
 
