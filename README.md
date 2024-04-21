@@ -58,7 +58,7 @@ From the original authors:
 
 ## Evaluation scripts
 
-The [scripts](scripts) folder contains scripts for running the experiments. Results of experiments 1 and 2 can be visualized with `new_analysis.ipynb`, but visualization of experiment 3 is currently not supported for the new models *(maybe tbd)*.
+The [scripts](scripts) folder contains scripts for running the experiments. Results of Experiments 1, 2, and 3b can be visualized with `new_analysis.ipynb`, but visualization of Experiment 3a (isolated instances) is currently not supported for the new models *(maybe tbd)*.
 
 ### NEW: HuggingFace / Pythia
 
@@ -74,6 +74,8 @@ bash scripts/run_exp2_pythia.sh blimp EleutherAI/pythia-70m-deduped main pythia-
 ```
 
 *Note*: revision `main` corresponds to the main branch / final checkpoint. Check one of the [HuggingFace Pythia Model Cards](https://huggingface.co/EleutherAI/pythia-70m-deduped) for details on how to access different (earlier) checkpoints.
+
+*Note 2*: In theory, quantization also works for Pythia models and the code is implemented (see equivalent [instructions](#quantized-model-either-4bit-or-8bit) below for OLMo models). However, in its current form, loading Pythia checkpoint shards is very slow (see [ToDo](#todo)).
 
 ### NEW: HuggingFace / OLMo
 
@@ -120,10 +122,11 @@ For more details on the base models still available read the [official documenta
 
 ## ToDo
 
-- currently each eval initializes the model repeatedly, resulting in redundant initializations running several evals at once (e.g. when using the recommended bash scripts) leading to severe slowdown
-- no batching: only single instances are passed to the model, again severe slowdown for larger models
-- analysis/evaluation with original Jupyter Notebook is kind of broken with new models
-- clean up code - there is quite some lot of boilerplate / redundant code + script files in there (and I added even more)
+- **Repeated model initializations**: currently each eval initializes the model repeatedly, resulting in redundant initializations when running several evals at once (e.g. when using the recommended bash scripts) leading to severe slowdown
+- **Pythia quantization very slow**: while the scripts run with quantized Pythia models, loading checkpoint shards takes too long, there must be something wrong with loading the quantized models for Pythia (works for OLMo though)
+- **Missing batching**: only single instances are passed to the model, possible improvements achievable (especially for larger models)
+- **Analysis/Evaluation broken**: original Jupyter Notebook is kind of broken with new models, evaluation for Experiment 3a (isolated) does not work
+- **Clean up code**: there is some boilerplate / redundant code + script files in there (and I added even more)
 
 ## Author
 
