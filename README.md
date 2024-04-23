@@ -45,6 +45,25 @@ The **OLMo** models were released by [AI2](https://allenai.org/) in different si
 
 - requires a GPU with `cuda >= 12.1` support (you can theoretically run smaller models on CPU, but not recommended)
 
+### venv
+
+- use [uv package manager]((https://github.com/astral-sh/uv)) for a fast setup
+```shell
+uv venv
+```
+```shell
+# macOS / Linux
+source .venv/bin/activate
+
+# Windows
+.venv\Scripts\activate
+```
+```shell
+uv pip install -r requirements.txt
+```
+
+### conda
+
 ```shell
 conda env create -f environment.yml
 conda activate meta-w
