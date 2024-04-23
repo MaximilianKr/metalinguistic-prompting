@@ -49,7 +49,7 @@ The **OLMo** models were released by [AI2](https://allenai.org/) in different si
 
 ### venv
 
-- use [uv package manager]((https://github.com/astral-sh/uv)) for a fast setup
+- use [uv package manager](https://github.com/astral-sh/uv) for a fast setup
 ```shell
 uv venv
 ```
