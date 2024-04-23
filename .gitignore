@@ -6,6 +6,7 @@ datasets/exp3/blimp/raw
 datasets/exp3/blimp/BLiMP.zip
 datasets/exp3/syntaxgym/syntaxgym_csv
 pythia-*
+.venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
