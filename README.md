@@ -12,6 +12,8 @@ This **work in progress** fork adds backends for `Pythia` and `OLMo` (with optio
   - [EleutherAI/Pythia](#eleutherai-pythia)
   - [AI2/OLMo](#ai2-olmo)
 - [Setup](#setup)
+  - [venv](#venv)
+  - [conda](#conda)
 - [Evaluation materials](#evaluation-materials)
 - [Evaluation scripts](#evaluation-scripts)
   - [NEW: HuggingFace / Pythia](#new-huggingface--pythia)
@@ -66,7 +68,7 @@ uv pip install -r requirements.txt
 
 ```shell
 conda env create -f environment.yml
-conda activate meta-w
+conda activate metalinguistic-prompting
 ```
 
 ## Evaluation materials
