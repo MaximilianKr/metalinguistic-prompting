@@ -24,8 +24,6 @@ This **work in progress** fork adds backends for `Pythia` and `OLMo` (with optio
 
 ## Additional Models
 
-Both models were released in different parameter sizes and with intermediate checkpoints available. The weights, training code, and data are all fully accessible.
-
 ### EleutherAI-Pythia
 
 - [arXiv Technical Report](https://arxiv.org/abs/2304.01373)
@@ -39,6 +37,8 @@ Both models were released in different parameter sizes and with intermediate che
 - [HuggingFace OLMo Suite](https://huggingface.co/collections/allenai/olmo-suite-65aeaae8fe5b6b2122b46778)
 - [Github OLMo](https://github.com/allenai/OLMo)
 - [AI2](https://allenai.org/)
+
+Both models were released in different parameter sizes and with intermediate checkpoints available. The weights, training code, and data are all fully accessible.
 
 ## Setup
 
@@ -123,7 +123,7 @@ The [scripts](scripts) folder contains scripts for running the experiments. Resu
 
 - `quantization`
   
-  - `8bit` or `4bit`, running with less precision but with less VRAM needed. Loading checkpoint shards can take longer than with pull precision (*quantized OLMo models load fine, Pythia models very slow*)
+  - `8bit` or `4bit`, running with less precision also requires less VRAM. Loading checkpoint shards can take longer than with full precision (*quantized OLMo models load fine, Pythia models very slow*)
 
 ### Old: FLAN-T5
 
@@ -153,11 +153,11 @@ For more details on the base models still available read the [official documenta
 
 - [ ] test **instruct-tuned models** for all other prompting techniques than *direct*
 
-- [ ] fix **Pythia quantization slow** loading quantized checkpoint shards for Pythia takes too long (works for OLMo though)
+- [ ] fix Pythia quantization - loading quantized checkpoint shards for Pythia takes too long (works for OLMo though)
 
-- [ ] add **batching support** only single instances passed to the model, possible improvements achievable (especially for larger models)
+- [ ] add batching support - only single instances passed to the model, possible improvements achievable (especially for larger models)
 
-- [ ] fix old scripts restore Flan-T5 and OpenAI support
+- [ ] fix old scripts - restore Flan-T5 and OpenAI support
 
 - [ ] fix `analysis.ipynb`` original notebook broken with new models, evaluation for Experiment 3a (isolated) does not work
 
