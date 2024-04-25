@@ -85,59 +85,48 @@ The [scripts](scripts) folder contains scripts for running the experiments. Resu
 
 ### Experiments
 
-- Experiment 1
+- Template
 
   ```shell
-  # Template
-  # bash scripts/run_exp1_hf.sh {p18, news} {huggingface/model} {revision}  # optional quantization: {4bit, 8bit}
+  bash scripts/run_exp{1,2,3a,3b}_hf.sh {corpus} {huggingface/model}
+  # optional: checkpoint {revision}, quantization {4bit, 8bit}
+   ```
+
+- Example calls
+
+  - Experiment 1
+
+    `{corpus}: {p18, news}`
   
-  # Example
-  bash scripts/run_exp1_hf.sh news EleutherAI/pythia-70m-deduped main
-  ```
+    ```shell
+    bash scripts/run_exp1_hf.sh news EleutherAI/pythia-70m-deduped step3000
+    ```
 
-- Experiment 2
+  - Experiment 2
 
-  ```shell
-  # Template
-  # bash scripts/run_exp2_hf.sh {huggingface/model} {revision}  # optional quantization: {4bit, 8bit}
-  
-  # Example
-  bash scripts/run_exp2_hf.sh allenai/OLMo-7B-hf main 8bit
-  ```
+    ```shell
+    bash scripts/run_exp2_hf.sh google/flan-t5-small  
+    ```
 
-- Experiment 3
+  - Experiment 3
 
-  ```shell
-  # Template
-  # bash scripts/run_exp3{a, b}_hf.sh {syntaxgym, blimp} {huggingface/model} {revision}  # optional quantization: {4bit, 8bit}
-  
-  # Example
-  bash scripts/run_exp3a_hf.sh EleutherAI/pythia-2.8B-deduped step3000 main
-  ```
+    `{corpus}: {syntaxgym, blimp}`
+
+    ```shell
+    bash scripts/run_exp3a_hf.sh syntaxgym allenai/OLMo-7B-hf main 8bit
+    ```
 
 #### Pythia & OLMo models
 
 - `revision`
 
-  - `main` corresponds to the final model checkpoint. Check either [Pythia](https://huggingface.co/EleutherAI/pythia-70m-deduped) or [OLMo](https://huggingface.co/allenai/OLMo-1.7-7B-hf) model cards on Huggingface for details on how to access different (earlier) checkpoints.
+  - `main` corresponds to the final model checkpoint. Must be set when using quantization. Check either [Pythia](https://huggingface.co/EleutherAI/pythia-70m-deduped) or [OLMo](https://huggingface.co/allenai/OLMo-1.7-7B-hf) model cards on Huggingface for details on how to access different (earlier) checkpoints.
 
 - `quantization`
   
-  - `8bit` or `4bit`, running with less precision also requires less VRAM. Loading checkpoint shards can take longer than with full precision (*quantized OLMo models load fine, Pythia models very slow*)
+  - `8bit` or `4bit`, running with less precision also requires less VRAM. Loading checkpoint shards can take longer than with full precision (*quantized OLMo models load fine, Pythia models very slow*). Must set revision to use.
 
-### Old: FLAN-T5
-
-*probably needs fixing*
-
-The original *HuggingFace* scripts (`*_hf.sh`) utilize the `FLAN-T5` models in 3 different sizes (small, large, XL).
-
-For example, to evaluate `flan-t5-small` on the *SyntaxGym* dataset of Experiment 3b, run the following command from the root of this directory:
-
-```shell
-bash scripts/run_exp3b_hf.sh syntaxgym google/flan-t5-small flan-t5-small
-```
-
-### Old: OpenAI
+### OpenAI
 
 *probably needs fixing*
 
@@ -157,7 +146,7 @@ For more details on the base models still available read the [official documenta
 
 - [ ] add batching support - only single instances passed to the model, possible improvements achievable (especially for larger models)
 
-- [ ] fix old scripts - restore Flan-T5 and OpenAI support
+- [ ] fix restore OpenAI support
 
 - [ ] fix `analysis.ipynb`` original notebook broken with new models, evaluation for Experiment 3a (isolated) does not work
 
