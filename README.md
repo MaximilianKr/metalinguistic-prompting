@@ -91,7 +91,7 @@ bash scripts/<experiment_script>.sh <corpus> EleutherAI/<pythia-model> <revision
 For example, to evaluate `pythia-70m-deduped` on the *dtfit* dataset for the word comparison of Experiment 2, run the following command from the root of this directory:
 
 ```shell
-bash scripts/run_exp2_pythia.sh blimp EleutherAI/pythia-70m-deduped main pythia-70m-deduped
+bash scripts/run_exp2_pythia.sh EleutherAI/pythia-70m-deduped main pythia-70m-deduped
 ```
 
 *Note*: revision `main` corresponds to the main branch / final checkpoint. Check one of the [HuggingFace Pythia Model Cards](https://huggingface.co/EleutherAI/pythia-70m-deduped) for details on how to access different (earlier) checkpoints.
