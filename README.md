@@ -24,25 +24,25 @@ This **work in progress** fork adds backends for `Pythia` and `OLMo` (with optio
 
 ## Additional Models
 
+Both models were released in different parameter sizes and with intermediate checkpoints available. The weights, training code, and data are all fully accessible.
+
 ### EleutherAI-Pythia
 
-The **Pythia** models were trained by [EleutherAI](https://www.eleuther.ai/) in different sizes with intermediate checkpoints available. The weights, training code, and data are all fully accessible.
-
-- [Technical Report on arXiv](https://arxiv.org/abs/2304.01373)
-- [Pythia Scaling Suite on HuggingFace](https://huggingface.co/collections/EleutherAI/pythia-scaling-suite-64fb5dfa8c21ebb3db7ad2e1)
-- [Offical Github repository](https://github.com/EleutherAI/pythia)
+- [arXiv Technical Report](https://arxiv.org/abs/2304.01373)
+- [HuggingFace Pythia Scaling Suite](https://huggingface.co/collections/EleutherAI/pythia-scaling-suite-64fb5dfa8c21ebb3db7ad2e1)
+- [Github pythia](https://github.com/EleutherAI/pythia)
+- [EleutherAI](https://www.eleuther.ai/)
 
 ### AI2-OLMo
 
-The **OLMo** models were released by [AI2](https://allenai.org/) in different sizes with intermediate checkpoints available. The weights, training code, and data are all fully accessible.
-
-- [Technical Report on arXiv](https://arxiv.org/abs/2402.00838)
-- [OLMo Suite on HuggingFace](https://huggingface.co/collections/allenai/olmo-suite-65aeaae8fe5b6b2122b46778)
-- [Offical Github repository](https://github.com/allenai/OLMo)
+- [arXiv Technical Report](https://arxiv.org/abs/2402.00838)
+- [HuggingFace OLMo Suite](https://huggingface.co/collections/allenai/olmo-suite-65aeaae8fe5b6b2122b46778)
+- [Github OLMo](https://github.com/allenai/OLMo)
+- [AI2](https://allenai.org/)
 
 ## Setup
 
-- requires a GPU with `cuda >= 12.1` support (you can theoretically run smaller models on CPU, but not recommended)
+- requires GPU with `cuda >= 12.1` support (smaller models can run on CPU, but not recommended)
 
 ### venv
 
@@ -149,19 +149,19 @@ For more details on the base models still available read the [official documenta
 
 ## ToDo
 
-- [ ] **Test** [minicons](https://github.com/kanishkamisra/minicons) implementation
+- [ ] test [minicons](https://github.com/kanishkamisra/minicons) implementation
 
-- [ ] **Test instruct-tuned models** for all other prompting techniques than *direct*
+- [ ] test **instruct-tuned models** for all other prompting techniques than *direct*
 
-- **Fix Pythia quantization slow**: loading quantized checkpoint shards for Pythia takes too long (works for OLMo though)
+- [ ] fix **Pythia quantization slow** loading quantized checkpoint shards for Pythia takes too long (works for OLMo though)
 
-- **Add batching support**: only single instances passed to the model, possible improvements achievable (especially for larger models)
+- [ ] add **batching support** only single instances passed to the model, possible improvements achievable (especially for larger models)
 
-- **Fix old scripts** restore Flan-T5 and OpenAI support
+- [ ] fix old scripts restore Flan-T5 and OpenAI support
 
-- **Fix Analysis.ipynb**: original notebook kind of broken with new models, evaluation for Experiment 3a (isolated) does not work
+- [ ] fix `analysis.ipynb`` original notebook broken with new models, evaluation for Experiment 3a (isolated) does not work
 
-- **Clean up code**
+- [ ] clean up code
 
 ## Author
 
