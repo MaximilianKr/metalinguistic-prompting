@@ -1,6 +1,4 @@
 import sys
-import os
-import json
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -71,9 +69,8 @@ def run_experiment(model, out_file: str, meta_data: dict):
 
 
 def main():
-    # TODO: use argparse instead for clarity
     if len(sys.argv) < 5:
-        print("Usage:\nbash scripts/<experiment_script>.sh <huggingface/model> <revision> <save_name> <optional: quantization>")
+        print("Usage:\nbash scripts/<experiment_script>.sh <huggingface/model> <optional:revision> <optional: quantization>") 
         sys.exit(1)
 
     # For reproducability
@@ -88,7 +85,6 @@ def main():
     # Define experiments
     experiments = [
         ("direct", "goodFirst"),
-        # TODO: test instruct models with other experiments
         ("metaQuestionSimple", "goodFirst"),
         ("metaQuestionSimple", "badFirst"),
         ("metaInstruct", "goodFirst"),
