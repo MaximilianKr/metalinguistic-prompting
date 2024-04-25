@@ -1,13 +1,19 @@
+#from transformers import  as transformers_logging
 from transformers import (
     AutoModelForCausalLM,
     GPTNeoXForCausalLM, 
-    AutoTokenizer, 
+    AutoTokenizer,
+    logging, 
     T5Tokenizer, 
     T5ForConditionalGeneration,
     BitsAndBytesConfig
 )
 import torch
 
+#transformers.logging.set_verbosity_error()
+# Set Transformers library to only log errors
+
+logging.set_verbosity_error()
 torch.set_grad_enabled(False)
 
 

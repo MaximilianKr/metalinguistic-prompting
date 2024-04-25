@@ -11,6 +11,12 @@ DATAFILE="datasets/exp2/${CORPUS}/corpus.csv"
 
 mkdir -p $RESULTDIR
 
+# Initialize model
+python initialize_model.py \
+        --model $MODEL \
+        --revision $REVISION \
+        --quantization $QUANTIZATION \
+
 # Helper function
 run_experiment () {
     # Capture relevant variables
