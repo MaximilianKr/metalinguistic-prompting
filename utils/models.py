@@ -112,7 +112,7 @@ class Pythia_LLM(LLM):
         # adapted from https://discuss.huggingface.co/t/announcement-generation-get-probabilities-for-generated-output/30075/17
         # Tokenize input prompt
         encoding = self._tokenizer(prompt, return_tensors="pt")
-        input_ids = encoding.input_ids.to('cuda')
+        input_ids = encoding.input_ids.to(self.device)
 
         # Process input through model
         outputs = self._model(input_ids)
