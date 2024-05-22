@@ -29,24 +29,41 @@ def initialize_model(model_name, revision, quantization, seed):
     else:
         device = torch.device("cpu")
         print("Using CPU (CUDA unvailable); adjust your expectations")
-        
-    # TODO: add backends: 'togethercomputer/RedPajama-INCITE-7B-Base'
-    #                     'TinyLlama/TinyLlama-1.1B'
-    #                     'Zyphra/Zamba-7b'
-
     # TODO: fix OpenAI
     # if model_name == "openai":
     #     # Secret file with API key (DO NOT commit this)
     #     openai_api.set_key_from_file(args.key)
     #     model = models.OpenAI_LLM(args.eval_type, args.model, args.seed)
     if "flan-t5" in model_name:
-        model = models.T5_LLM(model=model_name, seed=seed, device=device)
-    elif "pythia" in model_name:
-        model = models.Pythia_LLM(model=model_name, revision=revision, quantization=quantization, seed=seed, device=device)
-    elif "allenai" in model_name:
-        model = models.OLMo_LLM(model=model_name, revision=revision, quantization=quantization, seed=seed, device=device)
+        model = models.T5_LLM(
+            model=model_name, 
+            seed=seed, 
+            device=device
+            )
+    if quantization == 'full':
+        model = models.Causal_LLM(
+            model=model_name, 
+            revision=revision, 
+            quantization=quantization, 
+            seed=seed, 
+            device=device
+            )
     else:
-        raise ValueError(
-            f"Model not supported! (Your model: {model_name})"
-        )
+        if "pythia" in model_name:
+            model = models.Pythia_LLM(
+                model=model_name, 
+                revision=revision, 
+                quantization=quantization, 
+                seed=seed, 
+                device=device
+                )
+        elif "allenai" in model_name:
+            model = models.OLMo_LLM(
+                model=model_name, 
+                revision=revision, 
+                quantization=quantization, 
+                seed=seed, 
+                device=device
+                )
+
     return model

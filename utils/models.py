@@ -2,6 +2,7 @@ import openai
 import torch
 import numpy as np
 
+from minicons import scorer
 from .llm import load_mt, make_prompt
 
 
@@ -98,6 +99,53 @@ class OpenAI_LLM(LLM):
         else:
             return prompt, logprob_of_continuation
         
+class Causal_LLM(LLM):
+    def __init__(self, model, revision, quantization, seed, device="cpu"):
+        super().__init__(model, seed, device)
+        self.model = scorer.IncrementalLMScorer(
+            model=model, 
+            device=device, 
+            revision=revision
+            )
+        self.eval_type = ""
+        # self._model.eval()
+
+    def _get_logprobs(self, prompt):
+        pass
+
+    def get_full_sentence_logprob(self, sentence):
+        pass
+
+    def get_logprob_of_continuation(self,
+                                    prefix, 
+                                    continuation, 
+                                    task="word_pred",
+                                    options=None, 
+                                    return_dist=False,
+                                    ):
+        # Construct prompt and get logprobs
+        prompt = make_prompt(
+            prefix, 
+            continuation,
+            eval_type=self.eval_type,
+            task=task,
+            options=options
+        )
+
+        # Sequence Log-probability
+        # reduction = lambda x: x.sum(0).item()
+        # see https://github.com/kanishkamisra/minicons
+        logprob_of_continuation = self.model.sequence_score(
+            prompt, 
+            reduction = lambda x: x.sum(0).item()
+            )
+
+        if return_dist:
+            full_vocab_logprobs = []  # TODO: maybe fixme
+            return prompt, logprob_of_continuation[0], full_vocab_logprobs
+        else:
+            return prompt, logprob_of_continuation[0]
+
 
 class Pythia_LLM(LLM):
     # TODO: add batch processing?
