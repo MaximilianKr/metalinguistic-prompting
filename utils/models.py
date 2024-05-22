@@ -108,7 +108,6 @@ class Causal_LLM(LLM):
             revision=revision
             )
         self.eval_type = ""
-        # self._model.eval()
 
     def _get_logprobs(self, prompt):
         pass
