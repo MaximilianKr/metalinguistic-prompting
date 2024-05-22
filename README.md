@@ -16,12 +16,9 @@ This **work in progress** fork adds backends for `Pythia` and `OLMo` (with optio
   - [conda](#conda)
 - [Evaluation materials](#evaluation-materials)
 - [Evaluation scripts](#evaluation-scripts)
-  - [NEW: HuggingFace / Pythia](#new-huggingface--pythia)
-  - [NEW: HuggingFace / OLMo](#new-huggingface--olmo)
-    - [Full Precision](#full-precision)
-    - [Quantized Model](#quantized-model-either-4bit-or-8bit)
-  - [OLD: HuggingFace / FLAN-T5](#old-huggingface--flan-t5)
-  - [OLD: OpenAI](#old-openai)
+  - [Pythia / OLMo](#pythia--olmo-models)
+  - [FLAN-T5](#old-flan-t5)
+  - [OpenAI](#old-openai)
 - [ToDo](#todo)
 - [Author](#author)
 
@@ -29,37 +26,42 @@ This **work in progress** fork adds backends for `Pythia` and `OLMo` (with optio
 
 ### EleutherAI-Pythia
 
-The **Pythia** models were trained by [EleutherAI](https://www.eleuther.ai/) in different sizes with intermediate checkpoints available. The weights, training code, and data are all fully accessible.
-
-- [Technical Report on arXiv](https://arxiv.org/abs/2304.01373)
-- [Pythia Scaling Suite on HuggingFace](https://huggingface.co/collections/EleutherAI/pythia-scaling-suite-64fb5dfa8c21ebb3db7ad2e1)
-- [Offical Github repository](https://github.com/EleutherAI/pythia)
+- [arXiv Technical Report](https://arxiv.org/abs/2304.01373)
+- [HuggingFace Pythia Scaling Suite](https://huggingface.co/collections/EleutherAI/pythia-scaling-suite-64fb5dfa8c21ebb3db7ad2e1)
+- [Github pythia](https://github.com/EleutherAI/pythia)
+- [EleutherAI](https://www.eleuther.ai/)
 
 ### AI2-OLMo
 
-The **OLMo** models were released by [AI2](https://allenai.org/) in different sizes with intermediate checkpoints available. The weights, training code, and data are all fully accessible.
+- [arXiv Technical Report](https://arxiv.org/abs/2402.00838)
+- [HuggingFace OLMo Suite](https://huggingface.co/collections/allenai/olmo-suite-65aeaae8fe5b6b2122b46778)
+- [Github OLMo](https://github.com/allenai/OLMo)
+- [AI2](https://allenai.org/)
 
-- [Technical Report on arXiv](https://arxiv.org/abs/2402.00838)
-- [OLMo Suite on HuggingFace](https://huggingface.co/collections/allenai/olmo-suite-65aeaae8fe5b6b2122b46778)
-- [Offical Github repository](https://github.com/allenai/OLMo)
+Both models were released in different parameter sizes and with intermediate checkpoints available. The weights, training code, and data are all fully accessible.
 
 ## Setup
 
-- requires a GPU with `cuda >= 12.1` support (you can theoretically run smaller models on CPU, but not recommended)
+- requires GPU with `cuda >= 12.1` support (smaller models can run on CPU, but not recommended)
 
 ### venv
 
 - use [uv package manager](https://github.com/astral-sh/uv) for a fast setup
+
 ```shell
 uv venv
 ```
+
 ```shell
 # macOS / Linux
 source .venv/bin/activate
+```
 
+```shell
 # Windows
 .venv\Scripts\activate
 ```
+
 ```shell
 uv pip install -r requirements.txt
 ```
@@ -81,59 +83,52 @@ From the original authors:
 
 The [scripts](scripts) folder contains scripts for running the experiments. Results of Experiments 1, 2, and 3b can be visualized with `new_analysis.ipynb`, but visualization of Experiment 3a (isolated instances) is currently not supported for the new models *(maybe tbd)*.
 
-### NEW: HuggingFace / Pythia
+### Experiments
 
-```shell
-# Template 
-bash scripts/<experiment_script>.sh <corpus> EleutherAI/<pythia-model> <revision> <save_name>
-```
+- Template
 
-For example, to evaluate `pythia-70m-deduped` on the *dtfit* dataset for the word comparison of Experiment 2, run the following command from the root of this directory:
+  ```shell
+  bash scripts/run_exp{1,2,3a,3b}_hf.sh {corpus} {huggingface/model}
+  # optional: checkpoint {revision}, quantization {4bit, 8bit}
+   ```
 
-```shell
-bash scripts/run_exp2_pythia.sh EleutherAI/pythia-70m-deduped main pythia-70m-deduped
-```
+- Example calls
 
-*Note*: revision `main` corresponds to the main branch / final checkpoint. Check one of the [HuggingFace Pythia Model Cards](https://huggingface.co/EleutherAI/pythia-70m-deduped) for details on how to access different (earlier) checkpoints.
+  - Experiment 1
 
-*Note 2*: In theory, quantization also works for Pythia models and the code is implemented (see equivalent [instructions](#quantized-model-either-4bit-or-8bit) below for OLMo models). However, in its current form, loading Pythia checkpoint shards is very slow (see [ToDo](#todo)).
+    `{corpus}: {p18, news}`
+  
+    ```shell
+    bash scripts/run_exp1_hf.sh news EleutherAI/pythia-70m-deduped step3000
+    ```
 
-### NEW: HuggingFace / OLMo
+  - Experiment 2
 
-```shell
-# Template
-bash scripts/<experiment_script>.sh <corpus> allenai/<OLMo-model> <revision> <save_name> <optional: quantization>
-```
+    ```shell
+    bash scripts/run_exp2_hf.sh google/flan-t5-small  
+    ```
 
-#### Full Precision
+  - Experiment 3
 
-For example, to evaluate `OLMo-1B-hf` (with full precision) on the *news* dataset for the word prediction of Experiment 1, run the following command from the root of this directory:
+    `{corpus}: {syntaxgym, blimp}`
 
-```shell
-bash scripts/run_exp1_olmo.sh news allenai/OLMo-1B-hf main OLMo-1B-hf
-```
+    ```shell
+    bash scripts/run_exp3a_hf.sh syntaxgym allenai/OLMo-7B-hf main 8bit
+    ```
 
-*Note*: revision `main` corresponds to the main branch / final checkpoint. Check one of the [HuggingFace OLMo Model Cards](https://huggingface.co/allenai/OLMo-1.7-7B-hf) for details on how to access different (earlier) checkpoints.
+#### Pythia & OLMo models
 
-#### Quantized Model (either `4bit` or `8bit`)
+- `revision`
 
-For example, to evaluate `OLMo-7B-hf` with **4bit precision** on the *p18* dataset for the word prediction of Experiment 1, run the following command from the root of this directory:
+  - `main` corresponds to the final model checkpoint. Must be set when using quantization. Check either [Pythia](https://huggingface.co/EleutherAI/pythia-70m-deduped) or [OLMo](https://huggingface.co/allenai/OLMo-1.7-7B-hf) model cards on Huggingface for details on how to access different (earlier) checkpoints.
 
-```shell
-bash scripts/run_exp1_olmo.sh p18 allenai/OLMo-7B-hf main OLMo-7B-hf 4bit
-```
+- `quantization`
+  
+  - `8bit` or `4bit`, running with less precision also requires less VRAM. Loading checkpoint shards can take longer than with full precision (*quantized OLMo models load fine, Pythia models very slow*). Must set revision to use.
 
-### OLD: HuggingFace / FLAN-T5
+### OpenAI
 
-The original *HuggingFace* scripts (`*_hf.sh`) utilize the `FLAN-T5` models in 3 different sizes (small, large, XL).
-
-For example, to evaluate `flan-t5-small` on the *SyntaxGym* dataset of Experiment 3b, run the following command from the root of this directory:
-
-```shell
-bash scripts/run_exp3b_hf.sh syntaxgym google/flan-t5-small flan-t5-small
-```
-
-### OLD: OpenAI
+*probably needs fixing*
 
 The original *OpenAI* implementation (`*_openai.sh`) used 3 different models (`text-curie-001`/GPT-3, `text-davinci-002`/GTP-3.5-SFT, `text-davinci-003`/GTP-3.5-SFT+RLHF) all of which are deprecated by now.
 
@@ -143,11 +138,19 @@ For more details on the base models still available read the [official documenta
 
 ## ToDo
 
-- **Repeated model initializations**: currently each eval initializes the model repeatedly, resulting in redundant initializations when running several evals at once (e.g. when using the recommended bash scripts) leading to severe slowdown
-- **Pythia quantization very slow**: while the scripts run with quantized Pythia models, loading checkpoint shards takes too long, there must be something wrong with loading the quantized models for Pythia (works for OLMo though)
-- **Missing batching**: only single instances are passed to the model, possible improvements achievable (especially for larger models)
-- **Analysis/Evaluation broken**: original Jupyter Notebook is kind of broken with new models, evaluation for Experiment 3a (isolated) does not work
-- **Clean up code**: there is some boilerplate / redundant code + script files in there (and I added even more)
+- [ ] test [minicons](https://github.com/kanishkamisra/minicons) implementation
+
+- [ ] test **instruct-tuned models** for all other prompting techniques than *direct*
+
+- [ ] fix Pythia quantization - loading quantized checkpoint shards for Pythia takes too long (works for OLMo though)
+
+- [ ] add batching support - only single instances passed to the model, possible improvements achievable (especially for larger models)
+
+- [ ] fix restore OpenAI support
+
+- [ ] fix `analysis.ipynb`` original notebook broken with new models, evaluation for Experiment 3a (isolated) does not work
+
+- [ ] clean up code
 
 ## Author
 

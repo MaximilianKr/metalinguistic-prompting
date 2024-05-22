@@ -1,43 +1,20 @@
-# ~~~~~~~~~~~~~~~~~~~ EXPERIMENT 1: WORD PREDICTION
-
 import numpy as np
 import pandas as pd
-import argparse
+import sys
 from tqdm import tqdm
 
 from utils import io
 
 
-if __name__ == "__main__":
-    TASK = "word_pred"
-    
-    # Parse command-line arguments.
-    args = io.parse_args()
-    
-    # Set random seed.
-    np.random.seed(args.seed)
+def run_experiment(model, out_file: str, meta_data: dict):
+    eval_type = meta_data["eval_type"]
+    task = meta_data["task"]
 
-    # Meta information.
-    meta_data = {
-        "model": args.model,
-        "revision": args.revision,
-        "quantization": args.quantization,
-        "seed": args.seed,
-        "task": TASK,
-        "eval_type": args.eval_type,
-        "data_file": args.data_file,
-        "timestamp": io.timestamp()
-    }
+    model.eval_type = eval_type
     
-    # Set up model and other model-related variables.
-    model = io.initialize_model(args)
-    kwargs = {}
-
     # Read corpus data.
-    df = pd.read_csv(args.data_file)
+    df = pd.read_csv(meta_data["data_file"])
     
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MAIN LOOP
-    # Initialize results and get model outputs on each item.
     results = []
     for _, row in tqdm(list(df.iterrows()), total=len(df.index)):
         # Create prompt and get outputs.
@@ -45,10 +22,9 @@ if __name__ == "__main__":
             model.get_logprob_of_continuation(
                 row.prefix,
                 row.continuation,
-                task=TASK,
+                task=task,
                 options=None,
-                return_dist=True,
-                **kwargs # defined above in model initialization
+                return_dist=True
             )
         
         # Store results in dictionary.
@@ -59,21 +35,10 @@ if __name__ == "__main__":
             "gold_continuation": row.continuation,
             "logprob_of_gold_continuation": logprob_of_continuation,
         }
-        
-        # Deal with logprobs: different cases for OpenAI and Huggingface.
-        if args.model_type == "openai":
-            res["top_logprobs"] = logprobs
-        elif args.dist_folder is not None:
-            # Save full distribution over vocab items 
-            # (only corresponding to the first subword token).
-            model.save_dist_as_numpy(
-                logprobs, 
-                f"{args.dist_folder}/{row.item_id}.npy"
-            )
 
         # Record results for current item.
         results.append(res)
-
+    
     # Combine meta information with model results into one dict.
     output = {
         "meta": meta_data,
@@ -81,4 +46,52 @@ if __name__ == "__main__":
     }
 
     # Save outputs to specified JSON file.
-    io.dict2json(output, args.out_file)
+    io.dict2json(output, out_file)
+  
+
+
+def main():
+    if len(sys.argv) < 5:
+        print("Usage:\nbash scripts/<experiment_script>.sh <huggingface/model> <optional:revision> <optional: quantization>") 
+        sys.exit(1)
+
+    # For reproducability
+    seed = np.random.seed(42)
+
+    model_name, revision, quantization, data_file, outfile = sys.argv[1:6]
+
+    model = io.initialize_model(model_name, revision, quantization, seed)
+    
+    task = "word_pred"
+
+    # Define experiments
+    experiments = [
+        ("direct"),
+        ("metaQuestionSimple"),
+        ("metaInstruct"),
+        ("metaQuestionComplex"),
+    ]
+
+    # Run experiments
+    for eval_type in experiments:
+        meta_data = {
+            "model": model_name,
+            "revision": revision,
+            "quantization": quantization,
+            "seed": seed,
+            "task": task,
+            "eval_type": eval_type,
+            "data_file": data_file,
+            "timestamp": io.timestamp()
+        }
+
+        final_out = f"{outfile}_{eval_type}.json"
+
+        print(f"Running '{task}', '{eval_type}'")
+        run_experiment(
+            model, final_out, meta_data
+            )
+        
+
+if __name__ == '__main__':
+    main()

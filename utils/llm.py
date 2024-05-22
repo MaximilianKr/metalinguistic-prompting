@@ -1,13 +1,15 @@
 from transformers import (
     AutoModelForCausalLM,
     GPTNeoXForCausalLM, 
-    AutoTokenizer, 
+    AutoTokenizer,
+    logging, 
     T5Tokenizer, 
     T5ForConditionalGeneration,
     BitsAndBytesConfig
 )
 import torch
 
+logging.set_verbosity_error()
 torch.set_grad_enabled(False)
 
 
@@ -26,12 +28,11 @@ def load_mt(model_name="google/flan-t5-small", revision=None,
             )
     if "flan-t5" in model_name:
         model = T5ForConditionalGeneration.from_pretrained(
-            model_name, 
-            **kwargs
+            model_name
             ).to(device)
-        print(f"Successfully loaded model ({model_name})")
+        print(f"Successfully loaded model '{model_name}'")
         tokenizer = T5Tokenizer.from_pretrained(model_name)
-        print(f"Successfully loaded tokenizer ({model_name})")
+        print(f"Successfully loaded tokenizer '{model_name}'")
     elif "pythia" in model_name:
         cache_placeholder = model_name.split('/')[1]
         if quantization in ["4bit", "8bit"]:
@@ -41,23 +42,21 @@ def load_mt(model_name="google/flan-t5-small", revision=None,
                 cache_dir=f"./{cache_placeholder}/{revision}",
                 device_map="auto",
                 quantization_config=quantization_config,
-                **kwargs
                 )
         else:
             # Full precision
             model = GPTNeoXForCausalLM.from_pretrained(
                 model_name,
                 revision=revision,
-                cache_dir=f"./{cache_placeholder}/{revision}",
-                **kwargs
+                cache_dir=f"./{cache_placeholder}/{revision}"
                 ).to(device)
-        print(f"Successfully loaded model ({model_name}/{revision})")
+        print(f"Successfully loaded model '{model_name}/{revision}'")
         tokenizer = AutoTokenizer.from_pretrained(
             model_name,
             revision=revision,
             cache_dir=f"./{cache_placeholder}/{revision}",
             )
-        print(f"Successfully loaded tokenizer ({model_name}/{revision})")
+        print(f"Successfully loaded tokenizer '{model_name}/{revision}'")
     elif "allenai" in model_name:
         if quantization in ["4bit", "8bit"]:
             model = AutoModelForCausalLM.from_pretrained(
@@ -69,18 +68,17 @@ def load_mt(model_name="google/flan-t5-small", revision=None,
             # Full precision  
             model = AutoModelForCausalLM.from_pretrained(
                 model_name,
-                revision=revision,
-                **kwargs
+                revision=revision
             ).to(device)
-        print(f"Successfully loaded model ({model_name}/{revision})")
+        print(f"Successfully loaded model '{model_name}/{revision}'")
         tokenizer = AutoTokenizer.from_pretrained(model_name)
-        print(f"Successfully loaded tokenizer ({model_name}/{revision})")
+        print(f"Successfully loaded tokenizer '{model_name}/{revision}'")
     else:
         print("WARNING: code has only been tested for Flan-T5, Pythia, and OLMo Huggingface models")
-        model = AutoModelForCausalLM.from_pretrained(model_name, **kwargs).to(device)
-        print(f"Successfully loaded model ({model_name})")
+        model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
+        print(f"Successfully loaded model '{model_name}'")
         tokenizer = AutoTokenizer.from_pretrained(model_name)
-        print(f"Successfully loaded tokenizer ({model_name})")
+        print(f"Successfully loaded tokenizer '{model_name}'")
         
     return model, tokenizer
 

@@ -7,8 +7,8 @@ from .llm import load_mt, make_prompt
 
 # Base class for large language model.
 class LLM(object):
-    def __init__(self, eval_type, model, seed, device="cpu"):
-        self.eval_type = eval_type
+    def __init__(self, model, seed, device="cpu"):
+        self.eval_type = None
         self.model = model
         self.seed = seed
         self.device = device
@@ -101,17 +101,18 @@ class OpenAI_LLM(LLM):
 
 class Pythia_LLM(LLM):
     # TODO: add batch processing?
-    def __init__(self, eval_type, model, revision, quantization, seed, device="cpu"):
-        super().__init__(eval_type, model, seed, device)
-        self._model, self._tokenizer = load_mt(self.model, revision, quantization, device=self.device)
+    def __init__(self, model, revision, quantization, seed, device="cpu"):
+        super().__init__(model, seed, device)
+        self._model, self._tokenizer = load_mt(model, revision, quantization, device)
+        self.eval_type = ""
         self._model.eval()
 
-    def _get_logprobs(self, prompt, **kwargs):
+    def _get_logprobs(self, prompt): #**kwargs):
         # TODO: is this logic of getting logprobs correct?
         # adapted from https://discuss.huggingface.co/t/announcement-generation-get-probabilities-for-generated-output/30075/17
         # Tokenize input prompt
         encoding = self._tokenizer(prompt, return_tensors="pt")
-        input_ids = encoding.input_ids.to('cuda')
+        input_ids = encoding.input_ids.to(self.device)
 
         # Process input through model
         outputs = self._model(input_ids)
@@ -137,7 +138,7 @@ class Pythia_LLM(LLM):
 
         return {"tokens": tokens, "token_logprobs": token_logprobs}
 
-    def get_full_sentence_logprob(self, sentence, **kwargs):
+    def get_full_sentence_logprob(self, sentence):
         logprobs = self._get_logprobs(sentence)
         token_logprobs = logprobs["token_logprobs"]
 
@@ -153,7 +154,7 @@ class Pythia_LLM(LLM):
                                     task="word_pred",
                                     options=None, 
                                     return_dist=False,
-                                    **kwargs):
+                                    ):
         # Construct prompt and get logprobs
         prompt = make_prompt(
             prefix, 
@@ -162,7 +163,7 @@ class Pythia_LLM(LLM):
             task=task,
             options=options
         )
-        logprobs = self._get_logprobs(prompt, **kwargs)
+        logprobs = self._get_logprobs(prompt)
         tokens, token_logprobs = logprobs["tokens"], logprobs["token_logprobs"]
 
         # Identify indices from `tokens` that correspond to the relevant
@@ -204,8 +205,8 @@ class OLMo_LLM(Pythia_LLM):
 
 
 class T5_LLM(LLM):
-    def __init__(self, eval_type, model, seed, device="cpu", ignore_special_logprobs=True):
-        super().__init__(eval_type, model, seed, device=device)
+    def __init__(self, model, seed, device="cpu", ignore_special_logprobs=True):
+        super().__init__(model, seed, device=device)
         self._model, self._tokenizer = load_mt(self.model, device=self.device)
         self._model.eval()
         
