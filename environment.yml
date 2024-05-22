@@ -22,8 +22,8 @@ dependencies:
   - sentencepiece
   - tiktoken
   - tqdm
+  - transformers
   - pip
   - pip:
-      - transformers
-      - ai2-olmo
       - bitsandbytes
+      - minicons
