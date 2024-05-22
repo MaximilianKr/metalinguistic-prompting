@@ -8,19 +8,21 @@ This **work in progress** fork adds backends for `Pythia` and `OLMo` (with optio
 
 ## Overview
 
-- [Additional Models](#additional-models)
-  - [EleutherAI/Pythia](#eleutherai-pythia)
-  - [AI2/OLMo](#ai2-olmo)
-- [Setup](#setup)
-  - [venv](#venv)
-  - [conda](#conda)
-- [Evaluation materials](#evaluation-materials)
-- [Evaluation scripts](#evaluation-scripts)
-  - [Pythia / OLMo](#pythia--olmo-models)
-  - [FLAN-T5](#old-flan-t5)
-  - [OpenAI](#old-openai)
-- [ToDo](#todo)
-- [Author](#author)
+- [Diachronic Testing of Causal Language Models](#diachronic-testing-of-causal-language-models)
+  - [Overview](#overview)
+  - [Additional Models](#additional-models)
+    - [EleutherAI-Pythia](#eleutherai-pythia)
+    - [AI2-OLMo](#ai2-olmo)
+  - [Setup](#setup)
+    - [venv](#venv)
+    - [conda](#conda)
+  - [Evaluation materials](#evaluation-materials)
+  - [Evaluation scripts](#evaluation-scripts)
+    - [Experiments](#experiments)
+      - [Pythia \& OLMo models](#pythia--olmo-models)
+    - [OpenAI](#openai)
+  - [ToDo](#todo)
+  - [Author](#author)
 
 ## Additional Models
 
@@ -138,15 +140,15 @@ For more details on the base models still available read the [official documenta
 
 ## ToDo
 
-- [ ] test [minicons](https://github.com/kanishkamisra/minicons) implementation
+- [ ] fix [minicons](https://github.com/kanishkamisra/minicons) implementation for experiments 2, 3a, 3b
 
 - [ ] test **instruct-tuned models** for all other prompting techniques than *direct*
 
 - [ ] fix Pythia quantization - loading quantized checkpoint shards for Pythia takes too long (works for OLMo though)
 
-- [ ] add batching support - only single instances passed to the model, possible improvements achievable (especially for larger models)
+- [ ] add batching support - only single instances passed to the model, possible improvements achievable (especially for larger models) / batching for minicons?
 
-- [ ] fix restore OpenAI support
+- [ ] fix OpenAI support
 
 - [ ] fix `analysis.ipynb`` original notebook broken with new models, evaluation for Experiment 3a (isolated) does not work
 
